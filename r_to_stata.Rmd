@@ -1,0 +1,175 @@
+---
+title: "R to Stata Cheatsheet"
+author: "UVA StatLab"
+date: "2023-10-25"
+output: html_document
+---
+
+------
+
+R code followed by Stata code. Tested with R 4.3.1 and Stata 18.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+```
+
+### import CSV from URL
+
+```
+URL <- 'https://raw.githubusercontent.com/clayford/dataviz_with_ggplot2/master/alb_homes.csv'
+homes <- read.csv(file = URL)
+
+import delimited "https://raw.githubusercontent.com/clayford/dataviz_with_ggplot2/master/alb_homes.csv"
+```
+
+### head
+
+```
+head(homes)
+
+list in 1/6
+```
+
+### histogram
+
+```
+hist(homes$totalvalue)
+
+histogram totalvalue
+```
+
+
+### density histogram
+
+```
+plot(density(homes$totalvalue))
+
+kdensity totalvalue, kernel(gaussian)
+kdensity totalvalue /*epanechnikov*/
+```
+
+### linear model
+
+```
+m1 <- lm(totalvalue ~ finsqft + bedroom + lotsize, data = homes)
+summary(m1)
+
+regress totalvalue finsqft bedroom lotsize
+```
+
+### extract coefficients
+
+```
+coef(m1)
+
+matrix list e(b)
+```
+
+### residuals versus fitted values
+
+```
+plot(m1, which = 1)
+
+predict resid, residuals
+predict fitted, xb
+rvfplot, addplot(lowess resid fitted, leg(off))
+* list points of interest
+list totalvalue fitted finsqft bedroom lotsize if resid > 2000000
+```
+
+### QQ plot of residuals
+
+```
+plot(m1, which = 2)
+
+qnorm resid /*calculated above*/
+```
+
+### Scale-Location plot
+
+```
+plot(m1, which = 3)
+
+predict resid_z, rstandard
+replace resid_z = sqrt(abs(resid_z))
+twoway scatter resid_z fitted || 
+       lowess resid_z fitted 
+```
+
+### Residuals vs Leverage
+
+```
+plot(m1, which = 5)
+
+predict lev, leverage
+predict resid_z2, rstandard
+twoway scatter resid_z2 lev || 
+       lowess resid_z2 lev
+/*without Cooks D contours*/
+```
+
+### model with log-transformed response
+
+```
+m2 <- lm(log(totalvalue) ~ finsqft + bedroom + lotsize, data = homes)
+
+gen log_totalvalue = log(totalvalue )
+regress log_totalvalue finsqft bedroom lotsize
+```
+
+### model with categorical predictors
+
+```
+m4 <- lm(log(totalvalue) ~ fullbath + finsqft + hsdistrict, 
+         data = homes)
+
+encode hsdistrict, generate(hsdistrict_f)
+regress log_totalvalue fullbath finsqft i.hsdistrict_f
+```
+
+### model with interactions
+
+```
+m6 <- lm(log(totalvalue) ~ fullbath + finsqft + hsdistrict + 
+           fullbath:finsqft + 
+           fullbath:hsdistrict + 
+           finsqft:hsdistrict, 
+           data = homes)
+
+regress log_totalvalue fullbath finsqft i.hsdistrict_f  
+   c.fullbath#c.finsqft 
+   c.fullbath#i.hsdistrict_f 
+   c.finsqft#i.hsdistrict_f
+```
+
+### parial F tests (Type II SS)
+
+```
+drop1(m6)
+
+testparm c.finsqft#i.hsdistrict_f 
+testparm c.fullbath#hsdistrict_f
+testparm c.fullbath#c.finsqft
+```
+
+### Effect plot (continuous/categorical interaction)
+
+```
+library(ggeffects)
+plot(ggpredict(m6, terms = c("fullbath[1:5]", "hsdistrict")))
+
+margins i.hsdistrict_f,  at( (median) finsqft fullbath=(1(1)5)) 
+        expression(exp(predict(xb)))
+marginsplot
+```
+
+### Effect plot (continuous/continuous interaction)
+
+```
+plot(ggpredict(m6, terms = c("finsqft[1000:4000 by=500]", 
+                             "fullbath[2:5]")))
+
+margins,  at(finsqft=(1000(500)4000) fullbath=(2(1)5) hsdistrict_f=1)
+             expression(exp(predict(xb)))
+marginsplot
+```
