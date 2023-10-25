@@ -142,6 +142,20 @@ regress log_totalvalue fullbath finsqft i.hsdistrict_f
    c.finsqft#i.hsdistrict_f
 ```
 
+### model with non-linear effects
+R using natural splines, Stata using restricted cubic splines
+
+```
+library(splines)
+nlm3 <- lm(log(totalvalue) ~ ns(finsqft, 5) + lotsize + hsdistrict +
+           ns(finsqft, 5):hsdistrict, 
+         data = homes)
+
+
+makespline rcs finsqft, knots(7) basis(fsf) order(3) replace
+regress log_totalvalue lotsize c.fsf*##hsdistrict_f
+```
+
 ### parial F tests (Type II SS)
 
 ```
@@ -173,3 +187,4 @@ margins,  at(finsqft=(1000(500)4000) fullbath=(2(1)5) hsdistrict_f=1)
              expression(exp(predict(xb)))
 marginsplot
 ```
+

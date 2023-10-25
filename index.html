@@ -461,6 +461,18 @@ regress log_totalvalue fullbath finsqft i.hsdistrict_f
    c.fullbath#i.hsdistrict_f 
    c.finsqft#i.hsdistrict_f</code></pre>
 </div>
+<div id="model-with-non-linear-effects" class="section level3">
+<h3>model with non-linear effects</h3>
+<p>R using natural splines, Stata using restricted cubic splines</p>
+<pre><code>library(splines)
+nlm3 &lt;- lm(log(totalvalue) ~ ns(finsqft, 5) + lotsize + hsdistrict +
+           ns(finsqft, 5):hsdistrict, 
+         data = homes)
+
+
+makespline rcs finsqft, knots(7) basis(fsf) order(3) replace
+regress log_totalvalue lotsize c.fsf*##hsdistrict_f</code></pre>
+</div>
 <div id="parial-f-tests-type-ii-ss" class="section level3">
 <h3>parial F tests (Type II SS)</h3>
 <pre><code>drop1(m6)
