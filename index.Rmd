@@ -2,7 +2,10 @@
 title: "R to Stata Cheatsheet"
 author: "UVA StatLab"
 date: "2023-10-25"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ------
@@ -85,7 +88,7 @@ plot(m1, which = 2)
 qnorm resid /*calculated above*/
 ```
 
-### Scale-Location plot
+### scale-location plot
 
 ```
 plot(m1, which = 3)
@@ -96,7 +99,7 @@ twoway scatter resid_z fitted ||
        lowess resid_z fitted 
 ```
 
-### Residuals vs Leverage
+### residuals vs leverage
 
 ```
 plot(m1, which = 5)
@@ -156,7 +159,7 @@ makespline rcs finsqft, knots(7) basis(fsf) order(3) replace
 regress log_totalvalue lotsize c.fsf*##hsdistrict_f
 ```
 
-### parial F tests (Type II SS)
+### partial F tests (Type II SS)
 
 ```
 drop1(m6)
@@ -166,7 +169,7 @@ testparm c.fullbath#hsdistrict_f
 testparm c.fullbath#c.finsqft
 ```
 
-### Effect plot (continuous/categorical interaction)
+### effect plot (continuous/categorical interaction)
 
 ```
 library(ggeffects)
@@ -177,7 +180,7 @@ margins i.hsdistrict_f,  at( (median) finsqft fullbath=(1(1)5))
 marginsplot
 ```
 
-### Effect plot (continuous/continuous interaction)
+### effect plot (continuous/continuous interaction)
 
 ```
 plot(ggpredict(m6, terms = c("finsqft[1000:4000 by=500]", 
@@ -188,3 +191,46 @@ margins,  at(finsqft=(1000(500)4000) fullbath=(2(1)5) hsdistrict_f=1)
 marginsplot
 ```
 
+### AIC/BIC values for model comparison
+
+```
+m1 <- lm(totalvalue ~ finsqft + bedroom + lotsize, data = homes)
+m2 <- lm(totalvalue ~ finsqft + bedroom, data = homes)
+AIC(m1, m2)
+BIC(m1, m2)
+
+regress totalvalue finsqft bedroom lotsize
+estimates store m1
+regress totalvalue finsqft bedroom
+estimates store m2
+estimates table m1 m2, stats(aic bic)
+```
+
+### `for` loop
+
+To iterate through a sequence of values:
+
+```
+for (i in 1:nrow(homes)) {
+  cat('High school district for home', i, 'is', homes$hsdistrict[i], '\n')
+}
+
+local N = _N
+forval i = 1 / `N' {
+	display "High school district for home", `i', "is", hsdistrict[`i']
+}
+```
+
+To iterate through a set of tokens:
+
+```
+sch <- c('esdistrict', 'msdistrict', 'hsdistrict')
+for (i in sch) {
+  print(table(homes[[i]]))
+}
+
+local sch esdistrict msdistrict hsdistrict
+foreach i in `sch' {
+	tab `i'
+}
+```
