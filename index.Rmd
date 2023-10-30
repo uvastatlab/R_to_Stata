@@ -191,6 +191,17 @@ margins,  at(finsqft=(1000(500)4000) fullbath=(2(1)5) hsdistrict_f=1)
 marginsplot
 ```
 
+### AIC/BIC values 
+
+```
+m4 <- lm(log(totalvalue) ~ finsqft + bedroom + lotsize, 
+         data = homes)
+AIC(m4); BIC(m4)
+
+regress log_totalvalue finsqft bedroom lotsize
+estimates stats
+```
+
 ### AIC/BIC values for model comparison
 
 ```
