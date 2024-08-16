@@ -1610,6 +1610,15 @@ marginsplot</code></pre>
              expression(exp(predict(xb)))
 marginsplot</code></pre>
 </div>
+<div id="aicbic-values" class="section level3">
+<h3>AIC/BIC values</h3>
+<pre><code>m4 &lt;- lm(log(totalvalue) ~ finsqft + bedroom + lotsize, 
+         data = homes)
+AIC(m4); BIC(m4)
+
+regress log_totalvalue finsqft bedroom lotsize
+estimates stats</code></pre>
+</div>
 <div id="aicbic-values-for-model-comparison" class="section level3">
 <h3>AIC/BIC values for model comparison</h3>
 <pre><code>m1 &lt;- lm(totalvalue ~ finsqft + bedroom + lotsize, data = homes)
