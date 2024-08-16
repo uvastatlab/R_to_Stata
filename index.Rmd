@@ -21,7 +21,8 @@ knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
 ```
 URL <- 'https://raw.githubusercontent.com/clayford/dataviz_with_ggplot2/master/alb_homes.csv'
 homes <- read.csv(file = URL)
-
+```
+```
 import delimited "https://raw.githubusercontent.com/clayford/dataviz_with_ggplot2/master/alb_homes.csv"
 ```
 
@@ -29,7 +30,8 @@ import delimited "https://raw.githubusercontent.com/clayford/dataviz_with_ggplot
 
 ```
 head(homes)
-
+```
+```
 list in 1/6
 ```
 
@@ -37,7 +39,8 @@ list in 1/6
 
 ```
 hist(homes$totalvalue)
-
+```
+```
 histogram totalvalue
 ```
 
@@ -46,7 +49,8 @@ histogram totalvalue
 
 ```
 plot(density(homes$totalvalue))
-
+```
+```
 kdensity totalvalue, kernel(gaussian)
 kdensity totalvalue /*epanechnikov*/
 ```
@@ -56,7 +60,8 @@ kdensity totalvalue /*epanechnikov*/
 ```
 m1 <- lm(totalvalue ~ finsqft + bedroom + lotsize, data = homes)
 summary(m1)
-
+```
+```
 regress totalvalue finsqft bedroom lotsize
 ```
 
@@ -64,7 +69,8 @@ regress totalvalue finsqft bedroom lotsize
 
 ```
 coef(m1)
-
+```
+```
 matrix list e(b)
 ```
 
@@ -72,7 +78,8 @@ matrix list e(b)
 
 ```
 plot(m1, which = 1)
-
+```
+```
 predict resid, residuals
 predict fitted, xb
 rvfplot, addplot(lowess resid fitted, leg(off))
@@ -84,7 +91,8 @@ list totalvalue fitted finsqft bedroom lotsize if resid > 2000000
 
 ```
 plot(m1, which = 2)
-
+```
+```
 qnorm resid /*calculated above*/
 ```
 
@@ -92,7 +100,8 @@ qnorm resid /*calculated above*/
 
 ```
 plot(m1, which = 3)
-
+```
+```
 predict resid_z, rstandard
 replace resid_z = sqrt(abs(resid_z))
 twoway scatter resid_z fitted || 
@@ -103,7 +112,8 @@ twoway scatter resid_z fitted ||
 
 ```
 plot(m1, which = 5)
-
+```
+```
 predict lev, leverage
 predict resid_z2, rstandard
 twoway scatter resid_z2 lev || 
@@ -115,7 +125,8 @@ twoway scatter resid_z2 lev ||
 
 ```
 m2 <- lm(log(totalvalue) ~ finsqft + bedroom + lotsize, data = homes)
-
+```
+```
 gen log_totalvalue = log(totalvalue )
 regress log_totalvalue finsqft bedroom lotsize
 ```
@@ -125,7 +136,8 @@ regress log_totalvalue finsqft bedroom lotsize
 ```
 m4 <- lm(log(totalvalue) ~ fullbath + finsqft + hsdistrict, 
          data = homes)
-
+```
+```
 encode hsdistrict, generate(hsdistrict_f)
 regress log_totalvalue fullbath finsqft i.hsdistrict_f
 ```
@@ -138,7 +150,8 @@ m6 <- lm(log(totalvalue) ~ fullbath + finsqft + hsdistrict +
            fullbath:hsdistrict + 
            finsqft:hsdistrict, 
            data = homes)
-
+```
+```
 regress log_totalvalue fullbath finsqft i.hsdistrict_f  
    c.fullbath#c.finsqft 
    c.fullbath#i.hsdistrict_f 
@@ -153,8 +166,8 @@ library(splines)
 nlm3 <- lm(log(totalvalue) ~ ns(finsqft, 5) + lotsize + hsdistrict +
            ns(finsqft, 5):hsdistrict, 
          data = homes)
-
-
+```
+```
 makespline rcs finsqft, knots(7) basis(fsf) order(3) replace
 regress log_totalvalue lotsize c.fsf*##hsdistrict_f
 ```
@@ -163,7 +176,8 @@ regress log_totalvalue lotsize c.fsf*##hsdistrict_f
 
 ```
 drop1(m6)
-
+```
+```
 testparm c.finsqft#i.hsdistrict_f 
 testparm c.fullbath#hsdistrict_f
 testparm c.fullbath#c.finsqft
@@ -174,7 +188,8 @@ testparm c.fullbath#c.finsqft
 ```
 library(ggeffects)
 plot(ggpredict(m6, terms = c("fullbath[1:5]", "hsdistrict")))
-
+```
+```
 margins i.hsdistrict_f,  at( (median) finsqft fullbath=(1(1)5)) 
         expression(exp(predict(xb)))
 marginsplot
@@ -185,7 +200,8 @@ marginsplot
 ```
 plot(ggpredict(m6, terms = c("finsqft[1000:4000 by=500]", 
                              "fullbath[2:5]")))
-
+```
+```
 margins,  at(finsqft=(1000(500)4000) fullbath=(2(1)5) hsdistrict_f=1)
              expression(exp(predict(xb)))
 marginsplot
@@ -198,7 +214,8 @@ m1 <- lm(totalvalue ~ finsqft + bedroom + lotsize, data = homes)
 m2 <- lm(totalvalue ~ finsqft + bedroom, data = homes)
 AIC(m1, m2)
 BIC(m1, m2)
-
+```
+```
 regress totalvalue finsqft bedroom lotsize
 estimates store m1
 regress totalvalue finsqft bedroom
@@ -214,7 +231,8 @@ To iterate through a sequence of values:
 for (i in 1:nrow(homes)) {
   cat('High school district for home', i, 'is', homes$hsdistrict[i], '\n')
 }
-
+```
+```
 local N = _N
 forval i = 1 / `N' {
 	display "High school district for home", `i', "is", hsdistrict[`i']
@@ -228,9 +246,30 @@ sch <- c('esdistrict', 'msdistrict', 'hsdistrict')
 for (i in sch) {
   print(table(homes[[i]]))
 }
-
+```
+```
 local sch esdistrict msdistrict hsdistrict
 foreach i in `sch' {
 	tab `i'
 }
+```
+
+### multiple imputation
+
+Example uses `rnes96` data from _Extending the Linear Model_ by Julian Faraway. Data available [here](https://gist.github.com/clayford/367f5c88a6185ad8f36f866f3f6d6d72).
+
+```
+library(mice)
+md.pattern(rnes96)
+imp <- mice(rnes96, m = 10, print = FALSE, seed = 99)
+fit <- with(imp, multinom(party ~ age + education + income))
+summary(pool(fit))
+```
+```
+use rnes96.dta
+mi set flong
+mi misstable patterns
+mi register imputed education income
+mi impute chained (pmm, knn(5)) education income = party age, add(10)
+mi estimate: mlogit party age i.education income
 ```

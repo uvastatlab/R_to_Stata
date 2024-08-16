@@ -1491,47 +1491,40 @@ border-radius: 0px;
 <div id="import-csv-from-url" class="section level3">
 <h3>import CSV from URL</h3>
 <pre><code>URL &lt;- &#39;https://raw.githubusercontent.com/clayford/dataviz_with_ggplot2/master/alb_homes.csv&#39;
-homes &lt;- read.csv(file = URL)
-
-import delimited &quot;https://raw.githubusercontent.com/clayford/dataviz_with_ggplot2/master/alb_homes.csv&quot;</code></pre>
+homes &lt;- read.csv(file = URL)</code></pre>
+<pre><code>import delimited &quot;https://raw.githubusercontent.com/clayford/dataviz_with_ggplot2/master/alb_homes.csv&quot;</code></pre>
 </div>
 <div id="head" class="section level3">
 <h3>head</h3>
-<pre><code>head(homes)
-
-list in 1/6</code></pre>
+<pre><code>head(homes)</code></pre>
+<pre><code>list in 1/6</code></pre>
 </div>
 <div id="histogram" class="section level3">
 <h3>histogram</h3>
-<pre><code>hist(homes$totalvalue)
-
-histogram totalvalue</code></pre>
+<pre><code>hist(homes$totalvalue)</code></pre>
+<pre><code>histogram totalvalue</code></pre>
 </div>
 <div id="density-histogram" class="section level3">
 <h3>density histogram</h3>
-<pre><code>plot(density(homes$totalvalue))
-
-kdensity totalvalue, kernel(gaussian)
+<pre><code>plot(density(homes$totalvalue))</code></pre>
+<pre><code>kdensity totalvalue, kernel(gaussian)
 kdensity totalvalue /*epanechnikov*/</code></pre>
 </div>
 <div id="linear-model" class="section level3">
 <h3>linear model</h3>
 <pre><code>m1 &lt;- lm(totalvalue ~ finsqft + bedroom + lotsize, data = homes)
-summary(m1)
-
-regress totalvalue finsqft bedroom lotsize</code></pre>
+summary(m1)</code></pre>
+<pre><code>regress totalvalue finsqft bedroom lotsize</code></pre>
 </div>
 <div id="extract-coefficients" class="section level3">
 <h3>extract coefficients</h3>
-<pre><code>coef(m1)
-
-matrix list e(b)</code></pre>
+<pre><code>coef(m1)</code></pre>
+<pre><code>matrix list e(b)</code></pre>
 </div>
 <div id="residuals-versus-fitted-values" class="section level3">
 <h3>residuals versus fitted values</h3>
-<pre><code>plot(m1, which = 1)
-
-predict resid, residuals
+<pre><code>plot(m1, which = 1)</code></pre>
+<pre><code>predict resid, residuals
 predict fitted, xb
 rvfplot, addplot(lowess resid fitted, leg(off))
 * list points of interest
@@ -1539,24 +1532,21 @@ list totalvalue fitted finsqft bedroom lotsize if resid &gt; 2000000</code></pre
 </div>
 <div id="qq-plot-of-residuals" class="section level3">
 <h3>QQ plot of residuals</h3>
-<pre><code>plot(m1, which = 2)
-
-qnorm resid /*calculated above*/</code></pre>
+<pre><code>plot(m1, which = 2)</code></pre>
+<pre><code>qnorm resid /*calculated above*/</code></pre>
 </div>
 <div id="scale-location-plot" class="section level3">
 <h3>scale-location plot</h3>
-<pre><code>plot(m1, which = 3)
-
-predict resid_z, rstandard
+<pre><code>plot(m1, which = 3)</code></pre>
+<pre><code>predict resid_z, rstandard
 replace resid_z = sqrt(abs(resid_z))
 twoway scatter resid_z fitted || 
        lowess resid_z fitted </code></pre>
 </div>
 <div id="residuals-vs-leverage" class="section level3">
 <h3>residuals vs leverage</h3>
-<pre><code>plot(m1, which = 5)
-
-predict lev, leverage
+<pre><code>plot(m1, which = 5)</code></pre>
+<pre><code>predict lev, leverage
 predict resid_z2, rstandard
 twoway scatter resid_z2 lev || 
        lowess resid_z2 lev
@@ -1564,17 +1554,15 @@ twoway scatter resid_z2 lev ||
 </div>
 <div id="model-with-log-transformed-response" class="section level3">
 <h3>model with log-transformed response</h3>
-<pre><code>m2 &lt;- lm(log(totalvalue) ~ finsqft + bedroom + lotsize, data = homes)
-
-gen log_totalvalue = log(totalvalue )
+<pre><code>m2 &lt;- lm(log(totalvalue) ~ finsqft + bedroom + lotsize, data = homes)</code></pre>
+<pre><code>gen log_totalvalue = log(totalvalue )
 regress log_totalvalue finsqft bedroom lotsize</code></pre>
 </div>
 <div id="model-with-categorical-predictors" class="section level3">
 <h3>model with categorical predictors</h3>
 <pre><code>m4 &lt;- lm(log(totalvalue) ~ fullbath + finsqft + hsdistrict, 
-         data = homes)
-
-encode hsdistrict, generate(hsdistrict_f)
+         data = homes)</code></pre>
+<pre><code>encode hsdistrict, generate(hsdistrict_f)
 regress log_totalvalue fullbath finsqft i.hsdistrict_f</code></pre>
 </div>
 <div id="model-with-interactions" class="section level3">
@@ -1583,9 +1571,8 @@ regress log_totalvalue fullbath finsqft i.hsdistrict_f</code></pre>
            fullbath:finsqft + 
            fullbath:hsdistrict + 
            finsqft:hsdistrict, 
-           data = homes)
-
-regress log_totalvalue fullbath finsqft i.hsdistrict_f  
+           data = homes)</code></pre>
+<pre><code>regress log_totalvalue fullbath finsqft i.hsdistrict_f  
    c.fullbath#c.finsqft 
    c.fullbath#i.hsdistrict_f 
    c.finsqft#i.hsdistrict_f</code></pre>
@@ -1596,35 +1583,30 @@ regress log_totalvalue fullbath finsqft i.hsdistrict_f
 <pre><code>library(splines)
 nlm3 &lt;- lm(log(totalvalue) ~ ns(finsqft, 5) + lotsize + hsdistrict +
            ns(finsqft, 5):hsdistrict, 
-         data = homes)
-
-
-makespline rcs finsqft, knots(7) basis(fsf) order(3) replace
+         data = homes)</code></pre>
+<pre><code>makespline rcs finsqft, knots(7) basis(fsf) order(3) replace
 regress log_totalvalue lotsize c.fsf*##hsdistrict_f</code></pre>
 </div>
 <div id="partial-f-tests-type-ii-ss" class="section level3">
 <h3>partial F tests (Type II SS)</h3>
-<pre><code>drop1(m6)
-
-testparm c.finsqft#i.hsdistrict_f 
+<pre><code>drop1(m6)</code></pre>
+<pre><code>testparm c.finsqft#i.hsdistrict_f 
 testparm c.fullbath#hsdistrict_f
 testparm c.fullbath#c.finsqft</code></pre>
 </div>
 <div id="effect-plot-continuouscategorical-interaction" class="section level3">
 <h3>effect plot (continuous/categorical interaction)</h3>
 <pre><code>library(ggeffects)
-plot(ggpredict(m6, terms = c(&quot;fullbath[1:5]&quot;, &quot;hsdistrict&quot;)))
-
-margins i.hsdistrict_f,  at( (median) finsqft fullbath=(1(1)5)) 
+plot(ggpredict(m6, terms = c(&quot;fullbath[1:5]&quot;, &quot;hsdistrict&quot;)))</code></pre>
+<pre><code>margins i.hsdistrict_f,  at( (median) finsqft fullbath=(1(1)5)) 
         expression(exp(predict(xb)))
 marginsplot</code></pre>
 </div>
 <div id="effect-plot-continuouscontinuous-interaction" class="section level3">
 <h3>effect plot (continuous/continuous interaction)</h3>
 <pre><code>plot(ggpredict(m6, terms = c(&quot;finsqft[1000:4000 by=500]&quot;, 
-                             &quot;fullbath[2:5]&quot;)))
-
-margins,  at(finsqft=(1000(500)4000) fullbath=(2(1)5) hsdistrict_f=1)
+                             &quot;fullbath[2:5]&quot;)))</code></pre>
+<pre><code>margins,  at(finsqft=(1000(500)4000) fullbath=(2(1)5) hsdistrict_f=1)
              expression(exp(predict(xb)))
 marginsplot</code></pre>
 </div>
@@ -1633,9 +1615,8 @@ marginsplot</code></pre>
 <pre><code>m1 &lt;- lm(totalvalue ~ finsqft + bedroom + lotsize, data = homes)
 m2 &lt;- lm(totalvalue ~ finsqft + bedroom, data = homes)
 AIC(m1, m2)
-BIC(m1, m2)
-
-regress totalvalue finsqft bedroom lotsize
+BIC(m1, m2)</code></pre>
+<pre><code>regress totalvalue finsqft bedroom lotsize
 estimates store m1
 regress totalvalue finsqft bedroom
 estimates store m2
@@ -1646,9 +1627,8 @@ estimates table m1 m2, stats(aic bic)</code></pre>
 <p>To iterate through a sequence of values:</p>
 <pre><code>for (i in 1:nrow(homes)) {
   cat(&#39;High school district for home&#39;, i, &#39;is&#39;, homes$hsdistrict[i], &#39;\n&#39;)
-}
-
-local N = _N
+}</code></pre>
+<pre><code>local N = _N
 forval i = 1 / `N&#39; {
     display &quot;High school district for home&quot;, `i&#39;, &quot;is&quot;, hsdistrict[`i&#39;]
 }</code></pre>
@@ -1656,12 +1636,27 @@ forval i = 1 / `N&#39; {
 <pre><code>sch &lt;- c(&#39;esdistrict&#39;, &#39;msdistrict&#39;, &#39;hsdistrict&#39;)
 for (i in sch) {
   print(table(homes[[i]]))
-}
-
-local sch esdistrict msdistrict hsdistrict
+}</code></pre>
+<pre><code>local sch esdistrict msdistrict hsdistrict
 foreach i in `sch&#39; {
     tab `i&#39;
 }</code></pre>
+</div>
+<div id="multiple-imputation" class="section level3">
+<h3>multiple imputation</h3>
+<p>Example uses <code>rnes96</code> data from <em>Extending the Linear
+Model</em> by Julian Faraway. Data available <a href="https://gist.github.com/clayford/367f5c88a6185ad8f36f866f3f6d6d72">here</a>.</p>
+<pre><code>library(mice)
+md.pattern(rnes96)
+imp &lt;- mice(rnes96, m = 10, print = FALSE, seed = 99)
+fit &lt;- with(imp, multinom(party ~ age + education + income))
+summary(pool(fit))</code></pre>
+<pre><code>use rnes96.dta
+mi set flong
+mi misstable patterns
+mi register imputed education income
+mi impute chained (pmm, knn(5)) education income = party age, add(10)
+mi estimate: mlogit party age i.education income</code></pre>
 </div>
 
 
